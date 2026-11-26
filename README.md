@@ -11,7 +11,7 @@ This project looks at five US markets:
 - New England (ISO-NE)
 - Pacific Northwest, split into Oregon and Washington
 
-The best summary of the results and analysis can be found on [Streamlit](https://navdasari-datacenter-electricity-price-exploration-app-c-bzmhgz.streamlit.app/).
+The best summary of the results and analysis can be found on [Streamlit](https://datacenter-electricity-price-exploration.streamlit.app/).
 
 ![decomposition](output/decomposition_chart.png)
 
