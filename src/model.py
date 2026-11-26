@@ -148,7 +148,25 @@ def period_frames(m, dc):
     return ann, ytd, last
 
 
-def decompose(ann, ytd, theta, betas):
+def inflation_component(m, last):
+    """Inflation pass-through: prior national avg residential price x CPI inflation
+    (average of this year's and last year's rate, as rate cases lag). Pass-through of 1
+    is calibrated, not estimated: it matches the 2012-2019 national common trend."""
+    cpi = m.groupby(["year", "month"]).cpi.first()
+    out = {}
+    def window(months):
+        c = cpi[cpi.index.get_level_values(1).isin(months)].groupby(level=0).mean()
+        g = m[m.month.isin(months)].groupby("year")[["res_rev", "res_mwh"]].sum()
+        return np.log(c).diff(), g.res_rev / g.res_mwh * 100
+    pi, p = window(range(1, 13))
+    for y in range(2012, 2026):
+        out[y] = p[y - 1] * (pi[y] + pi[y - 1]) / 2
+    pi9, p9 = window(range(1, last + 1))
+    out[2026] = p9[2025] * (pi9[2026] + pi9[2025]) / 2
+    return out
+
+
+def decompose(ann, ytd, theta, betas, infl):
     rows = []
     def contrib(prev, cur):
         out = {}
@@ -178,7 +196,7 @@ def decompose(ann, ytd, theta, betas):
     # National common factor = average (across all states) of the change not explained by
     # state-specific measured factors; equals the change in the year fixed effect.
     national = {}
-    for year in range(2020, 2027):
+    for year in range(2011, 2027):
         p, c = frames(year)
         sts = [s for s in c.index if s in p.index]
         resid = [contrib(p.loc[s], c.loc[s]) for s in sts]
@@ -188,7 +206,8 @@ def decompose(ann, ytd, theta, betas):
         for year in range(2020, 2027):
             p, c = frames(year)
             w = p.loc[sts, "res_mwh"] / p.loc[sts, "res_mwh"].sum()
-            agg = {"National common factors (inflation, rates, equipment, etc.)": national[year]}
+            agg = {"National: inflation": infl[year],
+                   "National: grid costs & interest rates above inflation": national[year] - infl[year]}
             for s in sts:
                 for k, v in contrib(p.loc[s], c.loc[s]).items():
                     agg[k] = agg.get(k, 0) + w[s] * v
@@ -199,6 +218,7 @@ def decompose(ann, ytd, theta, betas):
             explained = sum(v for k, v in agg.items() if not k.startswith("_"))
             agg["Other / unexplained (T&D, policy, storms, rate cases)"] = agg["_actual"] - explained
             rows.append({"market": mkt, "year": year, **agg})
+    pd.DataFrame({"national_common": national, "inflation": infl}).rename_axis("year").to_csv(OUTD / "national_effects.csv")
     return pd.DataFrame(rows)
 
 
@@ -217,7 +237,7 @@ if __name__ == "__main__":
     print(fe.summary().tables[1])
     print(ob.summary().tables[1])
 
-    dec = decompose(ann, ytd, theta, ob.params)
+    dec = decompose(ann, ytd, theta, ob.params, inflation_component(m, last))
     dec.to_csv(OUTD / "decomposition.csv", index=False)
     results = {
         "dml_theta": theta, "dml_se": se,

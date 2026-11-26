@@ -21,8 +21,13 @@
    "texture": false
   },
   {
-   "name": "National common factors",
-   "color": "#257de0",
+   "name": "National: inflation",
+   "color": "#84b9f3",
+   "texture": false
+  },
+  {
+   "name": "National: grid costs & rates above inflation",
+   "color": "#1757ac",
    "texture": false
   },
   {
@@ -55,7 +60,8 @@
    "Data centers: fixed-cost spreading": -0.1612,
    "Capacity market (non-DC)": -0.0616,
    "Natural gas / fuel": 0.0215,
-   "National common factors": 0.3903,
+   "National: inflation": 0.1972,
+   "National: grid costs & rates above inflation": 0.1931,
    "Weather & hydro": -0.2441,
    "Load & usage (non-DC)": 0.4594,
    "Other / unexplained": -0.6231
@@ -73,7 +79,8 @@
    "Data centers: fixed-cost spreading": -0.1919,
    "Capacity market (non-DC)": 0.0413,
    "Natural gas / fuel": 0.0745,
-   "National common factors": 0.5937,
+   "National: inflation": 0.3814,
+   "National: grid costs & rates above inflation": 0.2123,
    "Weather & hydro": 0.1171,
    "Load & usage (non-DC)": -0.3601,
    "Other / unexplained": -0.5389
@@ -91,7 +98,8 @@
    "Data centers: fixed-cost spreading": -0.2114,
    "Capacity market (non-DC)": -0.0395,
    "Natural gas / fuel": -0.0529,
-   "National common factors": 0.9352,
+   "National: inflation": 0.8343,
+   "National: grid costs & rates above inflation": 0.1009,
    "Weather & hydro": 0.1084,
    "Load & usage (non-DC)": -0.1887,
    "Other / unexplained": 0.6025
@@ -109,7 +117,8 @@
    "Data centers: fixed-cost spreading": -0.264,
    "Capacity market (non-DC)": -0.0708,
    "Natural gas / fuel": -0.2288,
-   "National common factors": 1.0512,
+   "National: inflation": 0.8786,
+   "National: grid costs & rates above inflation": 0.1726,
    "Weather & hydro": -0.3639,
    "Load & usage (non-DC)": 0.7559,
    "Other / unexplained": -0.2472
@@ -127,7 +136,8 @@
    "Data centers: fixed-cost spreading": -0.1659,
    "Capacity market (non-DC)": -0.0146,
    "Natural gas / fuel": 0.2224,
-   "National common factors": 1.2003,
+   "National: inflation": 0.5541,
+   "National: grid costs & rates above inflation": 0.6462,
    "Weather & hydro": 0.1685,
    "Load & usage (non-DC)": -0.3633,
    "Other / unexplained": -1.0693
@@ -145,7 +155,8 @@
    "Data centers: fixed-cost spreading": -0.3816,
    "Capacity market (non-DC)": 0.1789,
    "Natural gas / fuel": 0.0366,
-   "National common factors": 0.7199,
+   "National: inflation": 0.4572,
+   "National: grid costs & rates above inflation": 0.2627,
    "Weather & hydro": 0.1771,
    "Load & usage (non-DC)": -0.3031,
    "Other / unexplained": -0.1403
@@ -163,7 +174,8 @@
    "Data centers: fixed-cost spreading": -0.4391,
    "Capacity market (non-DC)": 0.1497,
    "Natural gas / fuel": -0.0786,
-   "National common factors": 0.9862,
+   "National: inflation": 0.5065,
+   "National: grid costs & rates above inflation": 0.4797,
    "Weather & hydro": 0.0692,
    "Load & usage (non-DC)": 0.312,
    "Other / unexplained": 0.3001
@@ -181,7 +193,8 @@
    "Data centers: fixed-cost spreading": -0.0174,
    "Capacity market (non-DC)": -0.3082,
    "Natural gas / fuel": -0.4355,
-   "National common factors": 0.3903,
+   "National: inflation": 0.1972,
+   "National: grid costs & rates above inflation": 0.1931,
    "Weather & hydro": -0.2049,
    "Load & usage (non-DC)": 0.3612,
    "Other / unexplained": 0.1195
@@ -199,7 +212,8 @@
    "Data centers: fixed-cost spreading": -0.0214,
    "Capacity market (non-DC)": 0.2064,
    "Natural gas / fuel": -0.0612,
-   "National common factors": 0.5937,
+   "National: inflation": 0.3814,
+   "National: grid costs & rates above inflation": 0.2123,
    "Weather & hydro": 0.0392,
    "Load & usage (non-DC)": -0.2373,
    "Other / unexplained": -0.2603
@@ -217,7 +231,8 @@
    "Data centers: fixed-cost spreading": -0.0252,
    "Capacity market (non-DC)": -0.1974,
    "Natural gas / fuel": 1.2904,
-   "National common factors": 0.9352,
+   "National: inflation": 0.8343,
+   "National: grid costs & rates above inflation": 0.1009,
    "Weather & hydro": 0.1827,
    "Load & usage (non-DC)": -0.0606,
    "Other / unexplained": -0.7928
@@ -235,7 +250,8 @@
    "Data centers: fixed-cost spreading": -0.032,
    "Capacity market (non-DC)": -0.3542,
    "Natural gas / fuel": 0.638,
-   "National common factors": 1.0512,
+   "National: inflation": 0.8786,
+   "National: grid costs & rates above inflation": 0.1726,
    "Weather & hydro": -0.459,
    "Load & usage (non-DC)": 0.6271,
    "Other / unexplained": 0.2514
@@ -253,7 +269,8 @@
    "Data centers: fixed-cost spreading": -0.0218,
    "Capacity market (non-DC)": -0.0731,
    "Natural gas / fuel": -1.9551,
-   "National common factors": 1.2003,
+   "National: inflation": 0.5541,
+   "National: grid costs & rates above inflation": 0.6462,
    "Weather & hydro": 0.1575,
    "Load & usage (non-DC)": -0.411,
    "Other / unexplained": 1.682
@@ -271,7 +288,8 @@
    "Data centers: fixed-cost spreading": -0.0524,
    "Capacity market (non-DC)": 0.4707,
    "Natural gas / fuel": 0.2709,
-   "National common factors": 0.7199,
+   "National: inflation": 0.4572,
+   "National: grid costs & rates above inflation": 0.2627,
    "Weather & hydro": 0.3113,
    "Load & usage (non-DC)": -0.225,
    "Other / unexplained": -0.4833
@@ -289,7 +307,8 @@
    "Data centers: fixed-cost spreading": -0.0654,
    "Capacity market (non-DC)": 0.6676,
    "Natural gas / fuel": 0.9337,
-   "National common factors": 0.9862,
+   "National: inflation": 0.5065,
+   "National: grid costs & rates above inflation": 0.4797,
    "Weather & hydro": 0.0054,
    "Load & usage (non-DC)": -0.1715,
    "Other / unexplained": -0.866
@@ -307,7 +326,8 @@
    "Data centers: fixed-cost spreading": -0.1003,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": -0.3883,
-   "National common factors": 0.3903,
+   "National: inflation": 0.1972,
+   "National: grid costs & rates above inflation": 0.1931,
    "Weather & hydro": -0.1397,
    "Load & usage (non-DC)": 0.1188,
    "Other / unexplained": 0.0715
@@ -325,7 +345,8 @@
    "Data centers: fixed-cost spreading": -0.1,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": 1.0361,
-   "National common factors": 0.5937,
+   "National: inflation": 0.3814,
+   "National: grid costs & rates above inflation": 0.2123,
    "Weather & hydro": -0.0452,
    "Load & usage (non-DC)": -0.0039,
    "Other / unexplained": -1.0891
@@ -343,7 +364,8 @@
    "Data centers: fixed-cost spreading": -0.0612,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": 2.7562,
-   "National common factors": 0.9352,
+   "National: inflation": 0.8343,
+   "National: grid costs & rates above inflation": 0.1009,
    "Weather & hydro": 0.4033,
    "Load & usage (non-DC)": -0.9794,
    "Other / unexplained": -1.3992
@@ -361,7 +383,8 @@
    "Data centers: fixed-cost spreading": -0.1115,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": -1.9852,
-   "National common factors": 1.0512,
+   "National: inflation": 0.8786,
+   "National: grid costs & rates above inflation": 0.1726,
    "Weather & hydro": -0.1321,
    "Load & usage (non-DC)": -0.1548,
    "Other / unexplained": 2.0366
@@ -379,7 +402,8 @@
    "Data centers: fixed-cost spreading": -0.0574,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": -1.7115,
-   "National common factors": 1.2003,
+   "National: inflation": 0.5541,
+   "National: grid costs & rates above inflation": 0.6462,
    "Weather & hydro": -0.0388,
    "Load & usage (non-DC)": -0.0268,
    "Other / unexplained": 1.1058
@@ -397,7 +421,8 @@
    "Data centers: fixed-cost spreading": -0.1298,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": -0.0488,
-   "National common factors": 0.7199,
+   "National: inflation": 0.4572,
+   "National: grid costs & rates above inflation": 0.2627,
    "Weather & hydro": -0.0389,
    "Load & usage (non-DC)": -0.4401,
    "Other / unexplained": 0.3986
@@ -415,7 +440,8 @@
    "Data centers: fixed-cost spreading": -0.1952,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": 0.438,
-   "National common factors": 0.9862,
+   "National: inflation": 0.5065,
+   "National: grid costs & rates above inflation": 0.4797,
    "Weather & hydro": 0.0833,
    "Load & usage (non-DC)": -0.0985,
    "Other / unexplained": -0.4528
@@ -433,7 +459,8 @@
    "Data centers: fixed-cost spreading": -0.1023,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": -0.0016,
-   "National common factors": 0.3903,
+   "National: inflation": 0.1972,
+   "National: grid costs & rates above inflation": 0.1931,
    "Weather & hydro": 0.2359,
    "Load & usage (non-DC)": -0.7168,
    "Other / unexplained": 0.0348
@@ -451,7 +478,8 @@
    "Data centers: fixed-cost spreading": -0.1786,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": 0.0333,
-   "National common factors": 0.5937,
+   "National: inflation": 0.3814,
+   "National: grid costs & rates above inflation": 0.2123,
    "Weather & hydro": -0.3012,
    "Load & usage (non-DC)": 0.3779,
    "Other / unexplained": -0.26
@@ -469,7 +497,8 @@
    "Data centers: fixed-cost spreading": -0.1553,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": -0.0403,
-   "National common factors": 0.9352,
+   "National: inflation": 0.8343,
+   "National: grid costs & rates above inflation": 0.1009,
    "Weather & hydro": 0.1904,
    "Load & usage (non-DC)": -0.2791,
    "Other / unexplained": -0.1721
@@ -487,7 +516,8 @@
    "Data centers: fixed-cost spreading": -0.2,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": -0.2394,
-   "National common factors": 1.0512,
+   "National: inflation": 0.8786,
+   "National: grid costs & rates above inflation": 0.1726,
    "Weather & hydro": -0.0103,
    "Load & usage (non-DC)": -0.0714,
    "Other / unexplained": 0.47
@@ -505,7 +535,8 @@
    "Data centers: fixed-cost spreading": -0.0473,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": 0.1233,
-   "National common factors": 1.2003,
+   "National: inflation": 0.5541,
+   "National: grid costs & rates above inflation": 0.6462,
    "Weather & hydro": 0.1349,
    "Load & usage (non-DC)": -0.5035,
    "Other / unexplained": -0.0203
@@ -523,7 +554,8 @@
    "Data centers: fixed-cost spreading": -0.2731,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": 0.137,
-   "National common factors": 0.7199,
+   "National: inflation": 0.4572,
+   "National: grid costs & rates above inflation": 0.2627,
    "Weather & hydro": -0.2712,
    "Load & usage (non-DC)": 0.1674,
    "Other / unexplained": -0.1285
@@ -541,7 +573,8 @@
    "Data centers: fixed-cost spreading": -0.1801,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": -0.053,
-   "National common factors": 0.9862,
+   "National: inflation": 0.5065,
+   "National: grid costs & rates above inflation": 0.4797,
    "Weather & hydro": 0.0745,
    "Load & usage (non-DC)": -0.698,
    "Other / unexplained": -0.0171
@@ -559,7 +592,8 @@
    "Data centers: fixed-cost spreading": -0.0332,
    "Capacity market (non-DC)": -0.5129,
    "Natural gas / fuel": -0.5859,
-   "National common factors": 0.3903,
+   "National: inflation": 0.1972,
+   "National: grid costs & rates above inflation": 0.1931,
    "Weather & hydro": -0.2718,
    "Load & usage (non-DC)": 0.0836,
    "Other / unexplained": 1.0395
@@ -577,7 +611,8 @@
    "Data centers: fixed-cost spreading": -0.0406,
    "Capacity market (non-DC)": -0.2769,
    "Natural gas / fuel": -0.0614,
-   "National common factors": 0.5937,
+   "National: inflation": 0.3814,
+   "National: grid costs & rates above inflation": 0.2123,
    "Weather & hydro": -0.0314,
    "Load & usage (non-DC)": -0.1117,
    "Other / unexplained": 0.1498
@@ -595,7 +630,8 @@
    "Data centers: fixed-cost spreading": -0.0478,
    "Capacity market (non-DC)": -0.1901,
    "Natural gas / fuel": 1.8038,
-   "National common factors": 0.9352,
+   "National: inflation": 0.8343,
+   "National: grid costs & rates above inflation": 0.1009,
    "Weather & hydro": 0.142,
    "Load & usage (non-DC)": 0.0339,
    "Other / unexplained": 0.488
@@ -613,7 +649,8 @@
    "Data centers: fixed-cost spreading": -0.0643,
    "Capacity market (non-DC)": -0.3477,
    "Natural gas / fuel": 1.4197,
-   "National common factors": 1.0512,
+   "National: inflation": 0.8786,
+   "National: grid costs & rates above inflation": 0.1726,
    "Weather & hydro": -0.3315,
    "Load & usage (non-DC)": 0.4399,
    "Other / unexplained": 1.7682
@@ -631,7 +668,8 @@
    "Data centers: fixed-cost spreading": -0.0451,
    "Capacity market (non-DC)": -0.0982,
    "Natural gas / fuel": -2.4616,
-   "National common factors": 1.2003,
+   "National: inflation": 0.5541,
+   "National: grid costs & rates above inflation": 0.6462,
    "Weather & hydro": 0.1471,
    "Load & usage (non-DC)": -0.0898,
    "Other / unexplained": 0.2494
@@ -649,7 +687,8 @@
    "Data centers: fixed-cost spreading": -0.1034,
    "Capacity market (non-DC)": 0.0605,
    "Natural gas / fuel": -0.1799,
-   "National common factors": 0.7199,
+   "National: inflation": 0.4572,
+   "National: grid costs & rates above inflation": 0.2627,
    "Weather & hydro": 0.2831,
    "Load & usage (non-DC)": -0.2229,
    "Other / unexplained": 0.5012
@@ -667,7 +706,8 @@
    "Data centers: fixed-cost spreading": -0.1227,
    "Capacity market (non-DC)": -0.0027,
    "Natural gas / fuel": 0.9266,
-   "National common factors": 0.9862,
+   "National: inflation": 0.5065,
+   "National: grid costs & rates above inflation": 0.4797,
    "Weather & hydro": 0.0983,
    "Load & usage (non-DC)": -0.0782,
    "Other / unexplained": -1.9628
@@ -685,7 +725,8 @@
    "Data centers: fixed-cost spreading": -0.2212,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": 0.0004,
-   "National common factors": 0.3903,
+   "National: inflation": 0.1972,
+   "National: grid costs & rates above inflation": 0.1931,
    "Weather & hydro": -0.1793,
    "Load & usage (non-DC)": -0.0195,
    "Other / unexplained": 0.1839
@@ -703,7 +744,8 @@
    "Data centers: fixed-cost spreading": -0.176,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": 0.0468,
-   "National common factors": 0.5937,
+   "National: inflation": 0.3814,
+   "National: grid costs & rates above inflation": 0.2123,
    "Weather & hydro": 0.1507,
    "Load & usage (non-DC)": -0.4957,
    "Other / unexplained": 0.0879
@@ -721,7 +763,8 @@
    "Data centers: fixed-cost spreading": -0.2339,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": -0.0704,
-   "National common factors": 0.9352,
+   "National: inflation": 0.8343,
+   "National: grid costs & rates above inflation": 0.1009,
    "Weather & hydro": 0.0374,
    "Load & usage (non-DC)": -0.2607,
    "Other / unexplained": -0.3591
@@ -739,7 +782,8 @@
    "Data centers: fixed-cost spreading": -0.2896,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": -0.0529,
-   "National common factors": 1.0512,
+   "National: inflation": 0.8786,
+   "National: grid costs & rates above inflation": 0.1726,
    "Weather & hydro": 0.0386,
    "Load & usage (non-DC)": -0.0224,
    "Other / unexplained": 0.5846
@@ -757,7 +801,8 @@
    "Data centers: fixed-cost spreading": -0.1337,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": -0.0178,
-   "National common factors": 1.2003,
+   "National: inflation": 0.5541,
+   "National: grid costs & rates above inflation": 0.6462,
    "Weather & hydro": -0.0678,
    "Load & usage (non-DC)": -0.0104,
    "Other / unexplained": 0.9954
@@ -775,7 +820,8 @@
    "Data centers: fixed-cost spreading": -0.3824,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": 0.105,
-   "National common factors": 0.7199,
+   "National: inflation": 0.4572,
+   "National: grid costs & rates above inflation": 0.2627,
    "Weather & hydro": -0.0948,
    "Load & usage (non-DC)": -0.0046,
    "Other / unexplained": 0.422
@@ -793,7 +839,8 @@
    "Data centers: fixed-cost spreading": -0.4411,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": -0.0385,
-   "National common factors": 0.9862,
+   "National: inflation": 0.5065,
+   "National: grid costs & rates above inflation": 0.4797,
    "Weather & hydro": -0.2233,
    "Load & usage (non-DC)": 0.1329,
    "Other / unexplained": -0.3582
@@ -811,7 +858,8 @@
    "Data centers: fixed-cost spreading": -0.1357,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": -0.0134,
-   "National common factors": 0.3903,
+   "National: inflation": 0.1972,
+   "National: grid costs & rates above inflation": 0.1931,
    "Weather & hydro": -0.2122,
    "Load & usage (non-DC)": 0.4882,
    "Other / unexplained": -0.3518
@@ -829,7 +877,8 @@
    "Data centers: fixed-cost spreading": -0.1133,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": 0.0244,
-   "National common factors": 0.5937,
+   "National: inflation": 0.3814,
+   "National: grid costs & rates above inflation": 0.2123,
    "Weather & hydro": 0.1479,
    "Load & usage (non-DC)": -0.1459,
    "Other / unexplained": -0.271
@@ -847,7 +896,8 @@
    "Data centers: fixed-cost spreading": -0.1196,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": -0.0315,
-   "National common factors": 0.9352,
+   "National: inflation": 0.8343,
+   "National: grid costs & rates above inflation": 0.1009,
    "Weather & hydro": 0.0832,
    "Load & usage (non-DC)": -0.3046,
    "Other / unexplained": -0.4166
@@ -865,7 +915,8 @@
    "Data centers: fixed-cost spreading": -0.1864,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": -0.0225,
-   "National common factors": 1.0512,
+   "National: inflation": 0.8786,
+   "National: grid costs & rates above inflation": 0.1726,
    "Weather & hydro": -0.1308,
    "Load & usage (non-DC)": 0.3376,
    "Other / unexplained": -0.322
@@ -883,7 +934,8 @@
    "Data centers: fixed-cost spreading": -0.0956,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": -0.0362,
-   "National common factors": 1.2003,
+   "National: inflation": 0.5541,
+   "National: grid costs & rates above inflation": 0.6462,
    "Weather & hydro": -0.0025,
    "Load & usage (non-DC)": 0.0852,
    "Other / unexplained": -0.2357
@@ -901,7 +953,8 @@
    "Data centers: fixed-cost spreading": -0.2375,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": 0.0476,
-   "National common factors": 0.7199,
+   "National: inflation": 0.4572,
+   "National: grid costs & rates above inflation": 0.2627,
    "Weather & hydro": -0.1121,
    "Load & usage (non-DC)": 0.1387,
    "Other / unexplained": 0.7165
@@ -919,7 +972,8 @@
    "Data centers: fixed-cost spreading": -0.2861,
    "Capacity market (non-DC)": 0.0,
    "Natural gas / fuel": -0.0001,
-   "National common factors": 0.9862,
+   "National: inflation": 0.5065,
+   "National: grid costs & rates above inflation": 0.4797,
    "Weather & hydro": -0.2393,
    "Load & usage (non-DC)": 0.2476,
    "Other / unexplained": 0.7683

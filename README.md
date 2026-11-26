@@ -26,7 +26,7 @@ Each bar stacks the estimated contributions to that year's change in the average
 
 - **PJM is where data centers raise residential prices.** The effect runs through the capacity market. PJM's market monitor attributes about 45% of capacity charges from the 2025/26 auction onward to data center load, and those costs are spread across every PJM state. Restructured states, which buy capacity at market prices, feel this most. Data centers contribute about +0.6¢/kWh in 2025 and again in the first nine months of 2026, out of a +1.7¢ and +2.1¢ change in those periods.
 - **Outside capacity markets, the panel estimates point the other way.** Data center load spreads fixed grid costs over more kWh. The double ML estimate is −0.20¢/kWh for each percentage point of data center share of state load (SE 0.10). This matches LBNL's finding that load growth has tended to lower retail prices. **But the effect is not robust** (see below).
-- **Most of the increase everywhere is not data centers.** National common factors account for about +4.9¢ of the cumulative increase in every market: inflation, interest rates, equipment costs, and grid spending trends common to all states. Natural gas drove the 2022–23 spikes in restructured markets and the 2024 reversal (New England, PJM, ERCOT).
+- **Most of the increase everywhere is not data centers.** National common factors account for about +4.9¢ of the cumulative increase in every market. About **3.3¢ is general inflation** passing through to rates. The other **1.6¢ is above inflation**, concentrated in 2024 and 2026 YTD, consistent with the nationwide grid spending wave, higher interest rates feeding into rate cases, and equipment costs. Natural gas drove the 2022–23 spikes in restructured markets and the 2024 reversal (New England, PJM, ERCOT).
 
 ## Method
 
@@ -40,7 +40,13 @@ Each bar stacks the estimated contributions to that year's change in the average
    - degree days
    - use per customer
    - non-data-center load
-6. **Decomposition.** Each factor's contribution is its coefficient × the year-over-year change in that factor. The change in the year fixed effect becomes the "national common factors" bar. Whatever is left is "other / unexplained," which covers transmission and distribution rate cases, policy charges, storm and wildfire recovery, and fuel-clause timing.
+6. **Decomposition.** Each factor's contribution is its coefficient × the year-over-year change in that factor. The change in the year fixed effect is the national common factor, split into two bars:
+   - **Inflation:** the prior year's national average residential price × CPI inflation, averaged over this year and last because rate cases lag. Pass-through is set to 1, not estimated. Over 2012–2019 this explains the national common trend almost exactly: 1.66¢ predicted against 1.71¢ actual.
+   - **Grid costs & rates above inflation:** the remainder.
+
+   Inflation, interest rates and transformer prices can't be estimated separately, because they are national series and CPI and the transformer price index move almost together (correlation 0.96, 14 years). Free regressions on them gave unstable, wrong-signed coefficients.
+
+   Whatever is left after the national bars is "other / unexplained," which covers state-specific transmission and distribution rate cases, policy charges, storm and wildfire recovery, and fuel-clause timing.
 7. **Splitting the data center effect into two bars.** Fixed-cost spreading is calculated mechanically: 50% of the prior rate × the data center load growth ÷ total load. The cost push is the net effect minus the spreading. If the estimated net effect is more negative than the mechanical spreading, all of it is shown as spreading.
 
 ## Robustness: do the methods agree?
@@ -68,7 +74,7 @@ The three panel methods agree on a negative sign. The synthetic control for Oreg
   - Massachusetts and Connecticut policy charges
   - Washington's Climate Commitment Act
   - Oregon and Arizona wildfire costs
-- **The "National common factors" bar absorbs everything common to all states in a year.** It is not inflation alone.
+- **The two national bars assume every state got the average common shock.** Deviations from that average land in "other / unexplained." The "above inflation" bar is a remainder, not a direct measurement of grid spending or interest rates.
 
 ## Reproduce
 
