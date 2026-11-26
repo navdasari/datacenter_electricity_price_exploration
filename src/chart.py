@@ -14,6 +14,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTD = ROOT / "output"
+START_YEAR = 2022  # first year shown in the chart (full data stays in decomposition.csv)
 
 # Display groups (stack order from the zero line outward) -> source columns
 DISPLAY = [
@@ -45,7 +46,7 @@ def plot(g, path, ytd_months):
     axes = axes.ravel()
     names = [d[0] for d in DISPLAY]
     for ax, mkt in zip(axes, markets):
-        d = g[g.market == mkt].set_index("year")
+        d = g[(g.market == mkt) & (g.year >= START_YEAR)].set_index("year")
         x = np.arange(len(d))
         pos, neg = np.zeros(len(d)), np.zeros(len(d))
         for name, _, color, hatch in DISPLAY:
@@ -61,7 +62,7 @@ def plot(g, path, ytd_months):
                         ha="center", fontsize=7.5, color="#191919")
         ax.axhline(0, color="#c2c2c2", lw=1)
         ax.set_xticks(x, [str(y) if y < 2026 else f"2026\nYTD" for y in d.index], fontsize=8)
-        ax.set_title(f"{mkt}\n{d._price_prev.iloc[0]:.1f}¢ (2019) → {d._price.iloc[-2]:.1f}¢ (2025)", fontsize=9.5, loc="left")
+        ax.set_title(f"{mkt}\n{d._price_prev.iloc[0]:.1f}¢ ({START_YEAR - 1}) → {d._price.iloc[-2]:.1f}¢ (2025)", fontsize=9.5, loc="left")
         ax.grid(axis="y", color="#e7e7e7", lw=0.8)
         ax.set_axisbelow(True)
         for s in ["top", "right", "left"]:
@@ -75,7 +76,7 @@ def plot(g, path, ytd_months):
     handles.append(plt.Line2D([], [], marker="o", ls="", color="#191919", markersize=7))
     leg_ax = axes[n] if n < len(axes) else fig.add_axes([0.75, 0.05, 0.2, 0.3])
     leg_ax.legend(handles, names + ["Net change (actual)"], loc="center left", frameon=False, fontsize=8.5)
-    fig.suptitle("What moved residential electricity prices, 2020–2026", fontsize=13, x=0.01, ha="left", y=0.995)
+    fig.suptitle(f"What moved residential electricity prices, {START_YEAR}–2026", fontsize=13, x=0.01, ha="left", y=0.995)
     fig.text(0.01, 0.955, f"Stacked contributions to each year's change; dot = actual net change. 2026 = Jan–{['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][ytd_months]} vs same months of 2025. "
              "Data-center bars are modeled estimates (double ML + market-monitor capacity attribution).",
              fontsize=8.5, color="#666666")

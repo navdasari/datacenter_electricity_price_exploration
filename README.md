@@ -10,7 +10,7 @@ How much of the 2020–2026 change in residential electricity prices came from d
 
 ![decomposition](output/decomposition_chart.png)
 
-Each bar stacks the estimated contributions to that year's change in the average residential price (¢/kWh). The dot is the actual change. 2026 is January–September 2026 compared with the same months of 2025.
+Each bar stacks the estimated contributions to that year's change in the average residential price (¢/kWh). The dot is the actual change. The chart shows 2022–2026 (set by `START_YEAR` in `src/chart.py`); `output/decomposition.csv` has every year from 2020. 2026 is January–September 2026 compared with the same months of 2025.
 
 ## Headline findings (cumulative 2020–2025, ¢/kWh)
 
