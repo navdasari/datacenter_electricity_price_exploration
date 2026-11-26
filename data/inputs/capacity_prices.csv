@@ -1,0 +1,39 @@
+market,delivery_year_start,price,unit,zone,source,confidence
+PJM,2010,174.29,$/MW-day,RTO,PJM BRA historical results (from memory - verify),medium
+PJM,2011,110.00,$/MW-day,RTO,PJM BRA historical results (from memory - verify),medium
+PJM,2012,16.46,$/MW-day,RTO,PJM BRA historical results (from memory - verify),medium
+PJM,2013,27.73,$/MW-day,RTO,PJM BRA historical results (from memory - verify),medium
+PJM,2014,125.99,$/MW-day,RTO,PJM BRA historical results (from memory - verify),medium
+PJM,2015,136.00,$/MW-day,RTO,PJM BRA historical results (from memory - verify),medium
+PJM,2016,59.37,$/MW-day,RTO,PJM BRA historical results (from memory - verify),medium
+PJM,2017,120.00,$/MW-day,RTO,PJM BRA historical results (from memory - verify),medium
+PJM,2018,164.77,$/MW-day,RTO,PJM BRA historical results (from memory - verify),medium
+PJM,2019,100.00,$/MW-day,RTO,PJM BRA historical results (from memory - verify),medium
+PJM,2020,76.53,$/MW-day,RTO,PJM 2028/2029 BRA report historical table,high
+PJM,2021,140.00,$/MW-day,RTO,PJM 2028/2029 BRA report historical table,high
+PJM,2022,50.00,$/MW-day,RTO,PJM 2028/2029 BRA report historical table,high
+PJM,2023,34.13,$/MW-day,RTO,PJM 2024/2025 BRA report,high
+PJM,2024,28.92,$/MW-day,RTO,PJM 2024/2025 BRA report,high
+PJM,2025,269.92,$/MW-day,RTO,PJM 2025/2026 BRA report,high
+PJM,2026,329.17,$/MW-day,RTO,PJM 2026/2027 BRA report (price cap),high
+PJM,2027,333.44,$/MW-day,RTO,PJM 2027/2028 BRA report (price cap),high
+PJM,2028,325.00,$/MW-day,RTO,PJM 2028/2029 BRA report (price cap),high
+PJM,2025,444.26,$/MW-day,DOM,PJM 2025/2026 BRA report (Dominion LDA),high
+ISONE,2010,4.50,$/kW-month,RoP,ISO-NE FCA1 (from memory - verify),low
+ISONE,2011,3.60,$/kW-month,RoP,ISO-NE FCA2 (from memory - verify),low
+ISONE,2012,2.95,$/kW-month,RoP,ISO-NE FCA3 (from memory - verify),low
+ISONE,2013,2.95,$/kW-month,RoP,ISO-NE FCA4 (from memory - verify),low
+ISONE,2014,3.21,$/kW-month,RoP,ISO-NE FCA5 (from memory - verify),low
+ISONE,2015,3.43,$/kW-month,RoP,ISO-NE FCA6 (from memory - verify),low
+ISONE,2016,3.15,$/kW-month,RoP,ISO-NE FCA7 (from memory - verify),low
+ISONE,2017,15.00,$/kW-month,RoP,ISO-NE FCA8 new-resource price (from memory - verify),low
+ISONE,2018,9.55,$/kW-month,RoP,ISO-NE FCA9 (from memory - verify),low
+ISONE,2019,7.03,$/kW-month,RoP,ISO-NE FCA10,medium
+ISONE,2020,5.30,$/kW-month,RoP,ISO-NE FCA11,medium
+ISONE,2021,4.63,$/kW-month,RoP,ISO-NE FCA12,medium
+ISONE,2022,3.80,$/kW-month,RoP,ISO-NE FCA13,medium
+ISONE,2023,2.00,$/kW-month,RoP,ISO-NE FCA14,high
+ISONE,2024,2.61,$/kW-month,RoP,ISO-NE FCA15 Rest-of-Pool,high
+ISONE,2025,2.591,$/kW-month,RoP,ISO-NE FCA16 Rest-of-Pool,high
+ISONE,2026,2.59,$/kW-month,RoP,ISO-NE FCA17,high
+ISONE,2027,3.58,$/kW-month,RoP,ISO-NE FCA18 (news summary - verify),medium

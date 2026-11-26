@@ -1,0 +1,19 @@
+kind,key,value,unit,source,confidence
+national,2014,58,TWh,LBNL 2024 Data Center Energy Usage Report,high
+national,2016,60,TWh,LBNL 2024 report (stable ~60 TWh 2014-2016),medium
+national,2018,76,TWh,LBNL 2024 report Figure ES-1 (from memory - verify),medium
+national,2023,176,TWh,LBNL 2024 report,high
+national,2024,192,TWh,LBNL 2025 Update,high
+national,2025,230,TWh,ASSUMPTION: ~20%/yr growth consistent with LBNL 2025 Update trajectory,low
+national,2026,275,TWh,ASSUMPTION: ~20%/yr growth consistent with LBNL 2025 Update trajectory,low
+state_share_2023,VA,25.59,% of state load,EPRI Powering Intelligence 2024 Table 2,high
+state_share_2023,OR,11.39,% of state load,EPRI 2024 Table 2 (secondary source),medium
+state_share_2023,AZ,7.43,% of state load,EPRI 2024 Table 2 (secondary source),medium
+state_share_2023,WA,5.69,% of state load,EPRI 2024 Table 2 (single secondary source - verify),low
+state_share_2023,TX,4.60,% of state load,EPRI 2024 Table 2,high
+state_share_2023,IA,11.43,% of state load,EPRI 2024 Table 2 (secondary source),medium
+state_share_2023,NE,11.70,% of state load,EPRI 2024 Table 2 (secondary source),medium
+state_share_2023,ND,15.40,% of state load,EPRI 2024 Table 2 (secondary source),medium
+state_share_2023,WY,11.26,% of state load,EPRI 2024 Table 2 (secondary source),medium
+state_share_2023,NV,8.69,% of state load,EPRI 2024 Table 2 (secondary source),medium
+state_share_2023,UT,7.68,% of state load,EPRI 2024 Table 2 (secondary source),medium
