@@ -1,5 +1,7 @@
 # Data centers and residential electricity prices
 
+NOTE: This analysis is solely mine for personal exploration and enjoyment, does NOT represent peer-reviewed research, and does NOT reflect the views or opinions of my employer.
+
 How much of the 2020–2026 change in residential electricity prices came from data centers, and how much from everything else? This project looks at five US markets:
 
 - PJM, split into Virginia (Dominion) and the restructured PJM states (DE, DC, MD, NJ, OH, PA)
