@@ -21,6 +21,7 @@ import statsmodels.api as sm
 from sklearn.model_selection import GroupKFold
 
 from build_panel import aggregate, datacenter_load
+from markets import MARKETS
 
 ROOT = Path(__file__).resolve().parents[1]
 PROC, OUTD = ROOT / "data/processed", ROOT / "output"
@@ -36,15 +37,6 @@ EST_YEARS = range(2010, 2026)
 # regardless of the in-state generation mix.
 RETAIL_CHOICE = {"CT", "DE", "DC", "IL", "ME", "MD", "MA", "NH", "NJ", "NY", "OH", "PA", "RI", "TX"}
 
-MARKETS = {
-    "PJM: Virginia (Dominion)": ["VA"],
-    "PJM: restructured states": ["DE", "DC", "MD", "NJ", "OH", "PA"],
-    "ERCOT (Texas)": ["TX"],
-    "Arizona (APS/SRP)": ["AZ"],
-    "New England (ISO-NE)": ["CT", "MA", "ME", "NH", "RI", "VT"],
-    "Pacific NW: Oregon": ["OR"],
-    "Pacific NW: Washington": ["WA"],
-}
 
 GROUPS = {
     "Natural gas / fuel": ["gas_cost", "gas_cost_l1", "gas_marg", "gas_marg_l1"],

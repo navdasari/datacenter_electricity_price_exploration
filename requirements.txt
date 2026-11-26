@@ -9,3 +9,5 @@ lightgbm
 shap
 scipy
 matplotlib
+streamlit
+plotly

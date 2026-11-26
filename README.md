@@ -12,21 +12,21 @@ How much of the 2020–2026 change in residential electricity prices came from d
 
 Each bar stacks the estimated contributions to that year's change in the average residential price (¢/kWh). The dot is the actual change. The chart shows 2022–2026 (set by `START_YEAR` in `src/chart.py`); `output/decomposition.csv` has every year from 2020. 2026 is January–September 2026 compared with the same months of 2025.
 
-## Headline findings (cumulative 2020–2025, ¢/kWh)
+## Headline findings (cumulative 2022–2025, ¢/kWh)
 
 | Market | Actual change | Data centers, net | of which: capacity market | of which: local load |
 |---|---|---|---|---|
-| PJM: restructured states | +5.57 | **+0.59** | +0.58 | +0.01 |
-| PJM: Virginia (Dominion) | +3.21 | **+0.27** | +0.18 | +0.08 |
-| New England | +7.74 | ~0 | 0 | ~0 |
-| ERCOT (Texas) | +3.64 | **−0.56** | 0 | −0.56 |
-| Arizona | +2.82 | **−0.96** | 0 | −0.96 |
-| Oregon | +4.45 | **−1.44** | 0 | −1.44 |
-| Washington | +3.46 | **−0.89** | 0 | −0.89 |
+| PJM: restructured states | +5.36 | **+0.59** | +0.58 | +0.01 |
+| PJM: Virginia (Dominion) | +3.32 | **+0.24** | +0.18 | +0.06 |
+| New England | +7.33 | ~0 | 0 | ~0 |
+| ERCOT (Texas) | +3.29 | **−0.36** | 0 | −0.36 |
+| Arizona | +2.72 | **−0.67** | 0 | −0.67 |
+| Oregon | +4.09 | **−1.04** | 0 | −1.04 |
+| Washington | +3.06 | **−0.64** | 0 | −0.64 |
 
 - **PJM is where data centers raise residential prices.** The effect runs through the capacity market. PJM's market monitor attributes about 45% of capacity charges from the 2025/26 auction onward to data center load, and those costs are spread across every PJM state. Restructured states, which buy capacity at market prices, feel this most. Data centers contribute about +0.6¢/kWh in 2025 and again in the first nine months of 2026, out of a +1.7¢ and +2.1¢ change in those periods.
 - **Outside capacity markets, the panel estimates point the other way.** Data center load spreads fixed grid costs over more kWh. The double ML estimate is −0.20¢/kWh for each percentage point of data center share of state load (SE 0.10). This matches LBNL's finding that load growth has tended to lower retail prices. **But the effect is not robust** (see below).
-- **Most of the increase everywhere is not data centers.** National common factors account for about +4.9¢ of the cumulative increase in every market. About **3.3¢ is general inflation** passing through to rates. The other **1.6¢ is above inflation**, concentrated in 2024 and 2026 YTD, consistent with the nationwide grid spending wave, higher interest rates feeding into rate cases, and equipment costs. Natural gas drove the 2022–23 spikes in restructured markets and the 2024 reversal (New England, PJM, ERCOT).
+- **Most of the increase everywhere is not data centers.** National common factors account for about +3.9¢ of the 2022–2025 increase in every market. About **2.7¢ is general inflation** passing through to rates. The other **1.2¢ is above inflation**, concentrated in 2024 (and again in 2026 YTD), consistent with the nationwide grid spending wave, higher interest rates feeding into rate cases, and equipment costs. Natural gas drove the 2022–23 spikes in restructured markets and the 2024 reversal (New England, PJM, ERCOT).
 
 ## Method
 
@@ -75,6 +75,26 @@ The three panel methods agree on a negative sign. The synthetic control for Oreg
   - Washington's Climate Commitment Act
   - Oregon and Arizona wildfire costs
 - **The two national bars assume every state got the average common shock.** Deviations from that average land in "other / unexplained." The "above inflation" bar is a remainder, not a direct measurement of grid spending or interest rates.
+
+## Dashboard
+
+An interactive Streamlit version of the chart, plus the data center, national-factor and price-history views:
+
+```bash
+pip install -r requirements.txt
+```
+
+```bash
+streamlit run app.py
+```
+
+It reads the files in `output/` and `data/processed/`, so it doesn't rerun the models. Rerun the pipeline below to refresh it. Tabs:
+
+- **Price decomposition:** the stacked chart for all markets or one, grouped or detailed factors, with a table and CSV download.
+- **Data center effect:** cumulative effect by market (capacity market vs local load) and the robustness comparison.
+- **National factors:** inflation vs above-inflation, 2012–2026.
+- **Price history:** residential price by market, 2010–2026 YTD.
+- **Method & caveats:** the method and limitations sections of this README.
 
 ## Reproduce
 
