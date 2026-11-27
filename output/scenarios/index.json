@@ -1,0 +1,142 @@
+[
+ {
+  "label": "Baseline",
+  "changes": {},
+  "key": "41fb73f06f00"
+ },
+ {
+  "label": "Virginia/WV capacity pass-through 0%",
+  "changes": {
+   "capacity.pass_through_vert_int": 0.0
+  },
+  "key": "5e673358dd0d"
+ },
+ {
+  "label": "Virginia/WV capacity pass-through 50%",
+  "changes": {
+   "capacity.pass_through_vert_int": 0.5
+  },
+  "key": "c9a4f46147a6"
+ },
+ {
+  "label": "Virginia/WV capacity pass-through 100%",
+  "changes": {
+   "capacity.pass_through_vert_int": 1.0
+  },
+  "key": "2f5fcd97394b"
+ },
+ {
+  "label": "Residential load factor at peak 0.45",
+  "changes": {
+   "capacity.residential_peak_load_factor": 0.45
+  },
+  "key": "e88dd96add87"
+ },
+ {
+  "label": "Residential load factor at peak 0.65",
+  "changes": {
+   "capacity.residential_peak_load_factor": 0.65
+  },
+  "key": "e63db93b1624"
+ },
+ {
+  "label": "Illinois not in PJM",
+  "changes": {
+   "capacity.illinois_pjm_weight": 0.0
+  },
+  "key": "afcfa716fd54"
+ },
+ {
+  "label": "All of Illinois in PJM",
+  "changes": {
+   "capacity.illinois_pjm_weight": 1.0
+  },
+  "key": "35c6f34bd740"
+ },
+ {
+  "label": "Virginia uses the PJM-wide capacity price",
+  "changes": {
+   "capacity.use_dominion_zone": false
+  },
+  "key": "fab25e1e1b23"
+ },
+ {
+  "label": "Validation tolerance 20%",
+  "changes": {
+   "dc_load.validation_tol": 0.2
+  },
+  "key": "d98f1333a8cc"
+ },
+ {
+  "label": "Validation tolerance 50%",
+  "changes": {
+   "dc_load.validation_tol": 0.5
+  },
+  "key": "052194481f64"
+ },
+ {
+  "label": "Slower national data center growth (2025: 210, 2026: 230 TWh)",
+  "changes": {
+   "dc_load.national_2025_twh": 210.0,
+   "dc_load.national_2026_twh": 230.0
+  },
+  "key": "a57a7277925f"
+ },
+ {
+  "label": "Faster national data center growth (2025: 250, 2026: 320 TWh)",
+  "changes": {
+   "dc_load.national_2025_twh": 250.0,
+   "dc_load.national_2026_twh": 320.0
+  },
+  "key": "2d635725ece0"
+ },
+ {
+  "label": "Allocate remaining load by commercial + industrial sales",
+  "changes": {
+   "dc_load.remainder_allocation": "commercial_industrial"
+  },
+  "key": "b31f2ab0c657"
+ },
+ {
+  "label": "Allocate remaining load by total sales",
+  "changes": {
+   "dc_load.remainder_allocation": "total"
+  },
+  "key": "7eef58d079f5"
+ },
+ {
+  "label": "No floor on the state-specific measure",
+  "changes": {
+   "dc_load.floor_frac": 0.0
+  },
+  "key": "93e1fcf10881"
+ },
+ {
+  "label": "Floor at 50% of national scaling",
+  "changes": {
+   "dc_load.floor_frac": 0.5
+  },
+  "key": "74db5bf66a7b"
+ },
+ {
+  "label": "Trend window 2014\u20132019",
+  "changes": {
+   "dc_load.trend_start": 2014
+  },
+  "key": "0cfe623b79ff"
+ },
+ {
+  "label": "National-scaling load measure",
+  "changes": {
+   "estimation.exposure": "national_scaling"
+  },
+  "key": "c463785f3cd2"
+ },
+ {
+  "label": "No one-year lag",
+  "changes": {
+   "estimation.lag": false
+  },
+  "key": "00f3b2002fa1"
+ }
+]

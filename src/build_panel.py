@@ -3,11 +3,17 @@
 Inputs: data/raw (EIA, FRED, NOAA downloads) and data/inputs (hand-entered
 capacity prices and data center anchors, each with a source column).
 Output: data/processed/panel_monthly.parquet, data/processed/panel_annual.csv
+
+Only raw-data processing happens here. Capacity prices, capacity-market membership and the
+data center share of capacity costs are applied later (pipeline.apply_capacity), from
+data/inputs and the model configuration, so they can change without the raw data.
 """
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+from config import DataCenterLoadConfig, ModelConfig
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW, INP, OUT = ROOT / "data/raw", ROOT / "data/inputs", ROOT / "data/processed"
@@ -16,22 +22,6 @@ OUT.mkdir(parents=True, exist_ok=True)
 NOAA_ORDER = ("AL AZ AR CA CO CT DE FL GA ID IL IN IA KS KY LA ME MD MA MI MN MS MO "
               "MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY").split()
 STATES = NOAA_ORDER + ["DC"]  # contiguous US + DC (DC weather borrowed from MD)
-
-# Organized capacity markets. Weight = rough share of the state's load in the RTO.
-PJM_W = {"DE": 1, "DC": 1, "MD": 1, "NJ": 1, "OH": 1, "PA": 1, "VA": 1, "WV": 1, "IL": 0.6}
-ISONE = ["CT", "MA", "ME", "NH", "RI", "VT"]
-# Vertically integrated PJM states: utility owns most generation, so retail exposure to
-# the capacity *price* is muted (net long). Restructured states buy capacity at market.
-PJM_VERT_INT = {"VA", "WV"}
-# Share of PJM capacity charges attributed to data center load by the market monitor, by
-# delivery year (June-May). 2025/26-2027/28: $21.3B of $47.2B (45%) over three auctions;
-# 2028/29: $6.5B of $16.4B (40%). Earlier auctions: not attributed (0).
-DC_CAP_SHARE = {2025: 0.45, 2026: 0.45, 2027: 0.45, 2028: 0.40}
-DC_CAP_BAND = 0.05  # +/- band on that share for the uncertainty range
-# EPRI-anchored states use state-specific C&I load growth when it validates against EPRI's
-# 2023 level within this tolerance; otherwise national scaling.
-VALIDATION_TOL = 0.35
-
 
 def load_sales():
     d = pd.read_excel(RAW / "sales_revenue.xlsx", sheet_name="Monthly-States", header=None, skiprows=3)
@@ -144,27 +134,31 @@ def capacity_monthly():
     return pd.DataFrame(rows)
 
 
-def datacenter_load(annual):
+def datacenter_load(annual, cfg: DataCenterLoadConfig = DataCenterLoadConfig()):
     """State data center load (MWh/yr), two measures.
 
     dc_mwh_v1 (national scaling): 2023 EPRI share x state load, scaled over time by the
       national LBNL series, so every state grows at the national rate.
     dc_mwh (headline): for EPRI-anchored states, 2020+ load follows the state's own
       commercial + industrial (C&I) load above its 2012-2019 non-DC trend, chained from the
-      2019 level. Used only where the implied 2023 level is within VALIDATION_TOL of EPRI's
+      trend_end level. Used only where the implied 2023 level is within cfg.validation_tol of EPRI's
       2023 estimate (other states keep v1, since other industrial or crypto load swamps the
       signal). 2026 follows the national growth rate from 2025.
     """
     a = pd.read_csv(INP / "datacenter_anchors.csv")
-    nat = a[a.kind == "national"].assign(year=lambda d: d.key.astype(int)).set_index("year").value
+    nat = a[a.kind == "national"].assign(year=lambda d: d.key.astype(int)).set_index("year").value.copy()
+    nat[2025], nat[2026] = cfg.national_2025_twh, cfg.national_2026_twh  # extrapolations (assumptions)
+    nat = nat.sort_index()
     yrs = np.arange(2008, 2027)
     nat_i = pd.Series(np.exp(np.interp(yrs, nat.index, np.log(nat.values))), index=yrs)
-    nat_i[yrs < 2014] = nat[2014] * 0.97 ** (2014 - yrs[yrs < 2014])
+    nat_i[yrs < 2014] = nat[2014] * round(1 - cfg.backcast_decline, 12) ** (2014 - yrs[yrs < 2014])
     shares = a[a.kind == "state_share_2023"].set_index("key").value / 100
     a23 = annual[annual.year == 2023].set_index("state")
     dc23 = (shares * a23.tot_mwh).dropna()
     rest = nat_i[2023] * 1e6 - dc23.sum()
-    others = a23.com_mwh.drop(dc23.index)
+    alloc = {"commercial": a23.com_mwh, "commercial_industrial": a23.com_mwh + a23.ind_mwh,
+             "total": a23.tot_mwh}[cfg.remainder_allocation]
+    others = alloc.drop(dc23.index)
     epri = dc23.copy()
     dc23 = pd.concat([dc23, rest * others / others.sum()])
     v1 = pd.DataFrame([{"state": s, "year": y, "dc_mwh_v1": dc23[s] * nat_i[y] / nat_i[2023]}
@@ -178,12 +172,14 @@ def datacenter_load(annual):
     for s in epri.index:
         c = ci.loc[s].sort_index()
         d1 = v1i.loc[s]
-        nondc = (c - d1.reindex(c.index)).loc[2012:2019]
+        t0, t1 = cfg.trend_start, cfg.trend_end
+        nondc = (c - d1.reindex(c.index)).loc[t0:t1]
         b = np.polyfit(nondc.index, np.log(nondc.values), 1)
         resid = c - np.exp(np.polyval(b, c.index))
-        path = {y: max(0.3 * d1[y], d1[2019] + resid[y] - resid[2019]) for y in range(2020, 2026) if y in resid.index}
+        path = {y: max(cfg.floor_frac * d1[y], d1[t1] + resid[y] - resid[t1])
+                for y in range(t1 + 1, 2026) if y in resid.index}
         ratio = path[2023] / epri[s]
-        ok = abs(ratio - 1) <= VALIDATION_TOL
+        ok = abs(ratio - 1) <= cfg.validation_tol
         validation[s] = {"chained_2023_twh": path[2023] / 1e6, "epri_2023_twh": epri[s] / 1e6,
                          "ratio": ratio, "used": bool(ok)}
         if ok:
@@ -200,29 +196,13 @@ def build():
         .merge(gas, on=["year", "month", "state"], how="left") \
         .merge(wx, on=["year", "month", "state"], how="left") \
         .merge(fred, on=["year", "month"], how="left")
-    cap = capacity_monthly()
-    rto = cap[cap.zone.isin(["RTO", "RoP"])].pivot_table(index=["year", "month"], columns="market", values="cap_price").reset_index()
-    m = m.merge(rto, on=["year", "month"], how="left")
-    dom = cap[cap.zone == "DOM"][["year", "month", "cap_price"]].rename(columns={"cap_price": "dom"})
-    m = m.merge(dom, on=["year", "month"], how="left")
-    m["pjm_w"] = m.state.map(PJM_W).fillna(0)
-    m["isone_w"] = m.state.isin(ISONE).astype(float)
-    m["cap_price"] = m.pjm_w * m.PJM.fillna(0) + m.isone_w * m.ISONE.fillna(0)
-    va = (m.state == "VA") & m.dom.notna()
-    m.loc[va, "cap_price"] = m.loc[va, "dom"]
-    dy = np.where(m.month >= 6, m.year, m.year - 1)  # capacity delivery year
-    share = pd.Series(dy).map(DC_CAP_SHARE).fillna(0).values * (m.pjm_w.values > 0)
-    m["cap_dc_price"] = m.cap_price * share
-    m["cap_dc_price_lo"] = m.cap_price * np.clip(share - DC_CAP_BAND, 0, 1) * (share > 0)
-    m["cap_dc_price_hi"] = m.cap_price * (share + DC_CAP_BAND) * (share > 0)
-    m["cap_restructured"] = np.where(m.state.isin(PJM_VERT_INT), 0.0, 1.0)
-    m = m.drop(columns=["PJM", "ISONE", "dom"])
     m.to_parquet(OUT / "panel_monthly.parquet")
     return m
 
 
-def aggregate(m, months=range(1, 13)):
-    """Aggregate monthly panel to state x year over the given calendar months."""
+def aggregate(m, months=range(1, 13), heat_rate=7.5):
+    """Aggregate monthly panel to state x year over the given calendar months.
+    Expects the capacity columns added by pipeline.apply_capacity."""
     d = m[m.month.isin(list(months))].copy()
     d["gas_x_share"] = d.gas_price * d.gen_gas  # for generation-weighted gas price
     sums = d.groupby(["state", "year"])[["res_rev", "res_mwh", "com_mwh", "ind_mwh", "tot_mwh", "gen_total", "gen_gas",
@@ -237,16 +217,18 @@ def aggregate(m, months=range(1, 13)):
     a["hydro_share"] = a.gen_hydro / a.gen_total
     a["coal_share"] = a.gen_coal / a.gen_total
     # Fuel exposure: gas $/MMBtu x gas share of in-state generation x ~7.5 MMBtu/MWh -> cents/kWh
-    a["gas_cost"] = a.gas_price * a.gas_share * 7.5 / 10
+    a["gas_cost"] = a.gas_price * a.gas_share * heat_rate / 10
     a["res_kwh_per_cust"] = a.res_mwh * 1000 / a.res_cust / a.n_months * 12
     return a
 
 
 if __name__ == "__main__":
-    m = build()
-    a = aggregate(m)
+    from pipeline import apply_capacity
+    cfg = ModelConfig.baseline()
+    m = apply_capacity(build(), cfg.capacity)
+    a = aggregate(m, heat_rate=cfg.fuel.heat_rate)
     a = a[a.n_months == 12]
-    dc, nat, val = datacenter_load(a)
+    dc, nat, val = datacenter_load(a, cfg.dc_load)
     a = a.merge(dc, on=["state", "year"], how="left")
     print(pd.DataFrame(val).T.round(2))
     a.to_csv(OUT / "panel_annual.csv", index=False)

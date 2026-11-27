@@ -16,27 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 OUTD = ROOT / "output"
 START_YEAR = 2022  # first year shown in the chart (full data stays in decomposition.csv)
 
-# Display groups (stack order from the zero line outward) -> source columns
-DISPLAY = [
-    ("Data centers: cost push", ["Data centers: cost push"], "#6a4ce2", None),
-    ("Data centers: fixed-cost spreading", ["Data centers: fixed-cost spreading"], "#b3a5f0", "///"),
-    ("Capacity market (non-DC)", ["Capacity market (non-DC)"], "#00b894", None),
-    ("Natural gas / fuel", ["Natural gas / fuel"], "#f47230", None),
-    ("National: inflation", ["National: inflation"], "#84b9f3", None),
-    ("National: grid costs & rates above inflation", ["National: grid costs & interest rates above inflation"], "#1757ac", None),
-    ("Weather & hydro", ["Weather", "Hydro conditions"], "#f2a600", None),
-    ("Load & usage (non-DC)", ["Non-DC load growth", "Lower use per customer (efficiency, rooftop solar)"], "#ee7fac", None),
-    ("Other / unexplained", ["Other / unexplained (T&D, policy, storms, rate cases)"], "#a3a3a3", None),
-]
-
-
-def grouped(dec):
-    keep = ["market", "year", "_actual", "_price_prev", "_price", "_dc_net", "_dc_capacity", "_dc_local",
-            "_dc_net_lo", "_dc_net_hi", "_dc_cap_lo", "_dc_cap_hi"] + [c for c in dec.columns if c.startswith("_g")]
-    out = dec[keep].copy()
-    for name, cols, *_ in DISPLAY:
-        out[name] = dec[cols].sum(axis=1)
-    return out
+from display import DISPLAY, grouped  # noqa: E402
 
 
 def plot(g, path, ytd_months):
@@ -91,12 +71,13 @@ def plot(g, path, ytd_months):
     fig.savefig(path, dpi=160)
 
 
-if __name__ == "__main__":
-    dec = pd.read_csv(OUTD / "decomposition.csv")
-    res = json.loads((OUTD / "model_results.json").read_text())
+def main(out_dir: Path, png=True):
+    dec = pd.read_csv(out_dir / "decomposition.csv")
+    res = json.loads((out_dir / "model_results.json").read_text())
     g = grouped(dec)
-    plot(g, OUTD / "decomposition_chart.png", res["ytd_months"])
-    rob = json.loads((OUTD / "robustness.json").read_text())
+    if png:
+        plot(g, out_dir / "decomposition_chart.png", res["ytd_months"])
+    rob = json.loads((out_dir / "robustness.json").read_text())
     payload = {
         "groups": [{"name": n, "color": c, "texture": bool(h)} for n, _, c, h in DISPLAY],
         "rows": g.round(4).to_dict(orient="records"),
@@ -107,5 +88,12 @@ if __name__ == "__main__":
                                                                      "implied_effect_per_pp", "placebo_p_value", "top_donors"]}
                                              for k, v in rob["synthetic_control"].items()}},
     }
-    (OUTD / "chart_data.json").write_text(json.dumps(payload, indent=1))
+    (out_dir / "chart_data.json").write_text(json.dumps(payload, indent=1))
     print("wrote chart + json")
+
+
+if __name__ == "__main__":
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", default=str(OUTD))
+    main(Path(ap.parse_args().out))

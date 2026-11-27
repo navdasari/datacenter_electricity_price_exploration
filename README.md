@@ -111,8 +111,6 @@ Details are in `output/model_results.json` (all specifications, covariance matri
 
 ## Dashboard
 
-An interactive Streamlit version of the chart, plus the data center, national-factor and price-history views:
-
 ```bash
 pip install -r requirements.txt
 ```
@@ -121,15 +119,37 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-It reads the files in `output/` and `data/processed/`, so it doesn't rerun the models. Rerun the pipeline below to refresh it. Tabs:
+Two pages:
 
-- **Price decomposition:** the stacked chart for all markets or one, grouped or detailed factors, with a table and CSV download.
-- **Data center effect:** cumulative effect by market with 95% ranges, the method comparison, the capacity costs already set by PJM auctions, the specification comparison, and the load-measure validation.
-- **National factors:** inflation vs above-inflation, 2012–2026.
-- **Price history:** residential price by market, 2010–2026 YTD.
-- **Method & caveats:** the method and limitations sections of this README.
+- **Results:** the published baseline, read from `output/`.
+  - **Price decomposition:** the stacked chart for all markets or one, grouped or detailed factors, with a table and CSV download.
+  - **Data center effect:** cumulative effect by market with 95% ranges, the method comparison, the capacity costs already set by PJM auctions, the specification comparison and the load-measure validation.
+  - **National factors:** inflation vs above-inflation, 2012–2026.
+  - **Price history:** residential price by market, 2010–2026 YTD.
+  - **Method & caveats:** the method and limitations sections of this README.
+- **Assumptions & sensitivity:** change the modeling assumptions and compare every result with the baseline.
+  - **Mechanical assumptions update in about a second:** the data center share of PJM capacity costs and its band, fixed-cost spreading, inflation pass-through, and how ranges combine.
+  - **Assumptions that change the econometric estimates use precomputed alternatives when available** (19 one-at-a-time variants in `output/scenarios/`). Any other combination has a **Re-estimate** button that reruns the headline specification, about 15–40 seconds. Results are kept on the server for anyone who picks the same assumptions.
+  - **Every scenario can be downloaded as JSON** and rerun from the command line.
+
+The full assumption inventory, with where each one is implemented, what depends on it and its limitations, is in [docs/ASSUMPTIONS.md](docs/ASSUMPTIONS.md).
+
+## Code layout
+
+| File | Role |
+|---|---|
+| `src/config.py` | Every modeling assumption, with its baseline value, source, UI range and whether it changes the estimates. `ModelConfig.baseline()` reproduces the published results. |
+| `src/pipeline.py` | The model as three stages driven by a config: `prepare` (capacity costs, data center load, features), `estimate` (double ML + fixed effects; cached by `cfg.estimation_key()`), `attribute` (mechanical splits, national bars, ranges, outlook). |
+| `src/build_panel.py` | Raw EIA/FRED/NOAA files → `data/processed/panel_monthly.parquet` (raw-data steps only). |
+| `src/model.py` | Runs the headline and three alternative specifications and writes `output/`. |
+| `src/robustness.py`, `src/chart.py` | SHAP and synthetic control checks; static chart and chart data. |
+| `src/scenarios.py` | Precomputes estimates for common alternatives (`output/scenarios/`). |
+| `src/display.py`, `src/ui.py`, `views/`, `app.py` | Dashboard. |
+| `tests/test_baseline.py` | Golden-file tests: the pipeline must reproduce the published outputs (`tests/golden/`) within 1e-9, plus invariants of the mechanical assumptions. |
 
 ## Reproduce
+
+Requires Python 3.11+. Versions are pinned so the baseline reproduces exactly.
 
 ```bash
 pip install -r requirements.txt
@@ -140,13 +160,26 @@ src/download.sh
 ```
 
 ```bash
-cd src && python3 build_panel.py && python3 model.py && python3 robustness.py && python3 chart.py
+cd src && python3 build_panel.py && python3 model.py && python3 robustness.py && python3 chart.py && python3 scenarios.py
+```
+
+Run a scenario saved from the dashboard (writes the same files to a separate folder):
+
+```bash
+python3 src/model.py --config scenario.json --out output_scenario
+```
+
+Check that the baseline still reproduces:
+
+```bash
+pip install -r requirements-dev.txt && python3 -m pytest tests -q
 ```
 
 Outputs:
 
 - `output/decomposition.csv`: every component, by market and year, with 95% ranges on the data center effect
 - `output/capacity_outlook.csv`: PJM capacity costs in residential rates through 2028, total and data center share
-- `output/model_results.json`: coefficients, covariance matrices, all four specifications, load-measure validation, national-channel test and assumptions
+- `output/model_results.json`: coefficients, covariance matrices, all four specifications, load-measure validation, national-channel test, the full configuration and its estimation key
 - `output/robustness.json`: SHAP and synthetic control results
+- `output/scenarios/`: precomputed estimates for the dashboard's alternative assumptions
 - `output/decomposition_chart.png`: the chart

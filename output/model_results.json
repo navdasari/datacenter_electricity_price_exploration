@@ -623,5 +623,80 @@
     },
     "CAP_TO_CKWH": 0.007575757575757576,
     "PASS_THROUGH_VERT_INT": 0.2
-  }
+  },
+  "config": {
+    "dc_load": {
+      "national_2025_twh": 230.0,
+      "national_2026_twh": 275.0,
+      "backcast_decline": 0.03,
+      "remainder_allocation": "commercial",
+      "trend_start": 2012,
+      "trend_end": 2019,
+      "floor_frac": 0.3,
+      "validation_tol": 0.35
+    },
+    "capacity": {
+      "illinois_pjm_weight": 0.6,
+      "use_dominion_zone": true,
+      "pass_through_vert_int": 0.2,
+      "residential_peak_load_factor": 0.55,
+      "dc_share_2025_2027": 0.45,
+      "dc_share_2028": 0.4,
+      "dc_share_band": 0.05
+    },
+    "spreading": {
+      "fixed_share": 0.5
+    },
+    "inflation": {
+      "pass_through": 1.0,
+      "current_year_weight": 0.5
+    },
+    "fuel": {
+      "heat_rate": 7.5,
+      "retail_choice": [
+        "CT",
+        "DE",
+        "DC",
+        "IL",
+        "ME",
+        "MD",
+        "MA",
+        "NH",
+        "NJ",
+        "NY",
+        "OH",
+        "PA",
+        "RI",
+        "TX"
+      ]
+    },
+    "estimation": {
+      "exposure": "state_specific",
+      "lag": true,
+      "est_start": 2010,
+      "est_end": 2025,
+      "n_folds": 5,
+      "n_rep": 5,
+      "national_test_exposure": "national_scaling"
+    },
+    "uncertainty": {
+      "z": 1.96,
+      "combine": "add"
+    },
+    "robustness": {
+      "synth_pre": [
+        2010,
+        2019
+      ],
+      "synth_post": [
+        2020,
+        2025
+      ],
+      "donor_max_dc_share": 3.0,
+      "donor_exclude": [
+        "CA"
+      ]
+    }
+  },
+  "estimation_key": "41fb73f06f00"
 }

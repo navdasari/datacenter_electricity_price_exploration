@@ -4,7 +4,10 @@
    SHAP values on data center share gives a model-agnostic analogue of theta.
 2. Synthetic control for Virginia, Oregon and Arizona (high data center share states):
    donor pool = states with low data center exposure; pre-period 2010-2019.
+
+Settings come from config.RobustnessConfig. Usage: python3 robustness.py [--out DIR] [--processed DIR]
 """
+import argparse
 import json
 from pathlib import Path
 
@@ -14,7 +17,8 @@ import pandas as pd
 import shap
 from scipy.optimize import minimize
 
-from model import X_COLS, within
+from config import ModelConfig, RobustnessConfig
+from pipeline import X_COLS, within
 
 ROOT = Path(__file__).resolve().parents[1]
 PROC, OUTD = ROOT / "data/processed", ROOT / "output"
@@ -58,21 +62,23 @@ def synth(panel, treated, donors, pre=range(2010, 2020), post=range(2020, 2026))
     return gap, pd.Series(w, index=donors), pre_rmspe, post_rmspe
 
 
-def synth_all(ann):
-    p = ann[ann.year.between(2010, 2025)]
+def synth_all(ann, cfg: RobustnessConfig = RobustnessConfig()):
+    pre = range(cfg.synth_pre[0], cfg.synth_pre[1] + 1)
+    post = range(cfg.synth_post[0], cfg.synth_post[1] + 1)
+    p = ann[ann.year.between(cfg.synth_pre[0], cfg.synth_post[1])]
     dc23 = p[p.year == 2023].set_index("state").dc_share
     # Donors: low data center exposure, not in a capacity market (whose 2025 shock would bias the gap)
     capm = p[p.year == 2023].set_index("state").capmkt
-    donors = [s for s in dc23.index if dc23[s] < 3 and capm[s] == 0 and s not in ("CA",)]
+    donors = [s for s in dc23.index if dc23[s] < cfg.donor_max_dc_share and capm[s] == 0 and s not in cfg.donor_exclude]
     res = {}
     for t in ["VA", "OR", "AZ"]:
-        gap, w, pre, post = synth(p, t, donors)
+        gap, w, pre_r, post_r = synth(p, t, donors, pre, post)
         # placebo-in-space: rank of post/pre RMSPE ratio
         ratios = []
         for d in donors:
-            g2, _, pr2, po2 = synth(p, d, [x for x in donors if x != d])
+            g2, _, pr2, po2 = synth(p, d, [x for x in donors if x != d], pre, post)
             ratios.append(po2 / pr2)
-        ratio = post / pre
+        ratio = post_r / pre_r
         dshare = dc23.get(t) - p[(p.year == 2019) & (p.state == t)].dc_share.iloc[0]
         dshare25 = p[(p.year == 2025) & (p.state == t)].dc_share.iloc[0] - p[(p.year == 2019) & (p.state == t)].dc_share.iloc[0]
         res[t] = {
@@ -81,21 +87,31 @@ def synth_all(ann):
             "gap_2025_cents": float(gap.loc[2025]),
             "dc_share_change_2019_2025_pp": float(dshare25),
             "implied_effect_per_pp": float(gap.loc[2025] / dshare25) if dshare25 else None,
-            "pre_rmspe": float(pre), "post_pre_ratio": float(ratio),
+            "pre_rmspe": float(pre_r), "post_pre_ratio": float(ratio),
             "placebo_p_value": float((np.sum(np.array(ratios) >= ratio) + 1) / (len(ratios) + 1)),
             "top_donors": w[w > 0.02].sort_values(ascending=False).round(3).to_dict(),
         }
     return res, donors
 
 
-if __name__ == "__main__":
-    est = pd.read_csv(PROC / "estimation_sample.csv")
-    feats = pd.read_csv(PROC / "features_all.csv")
+def main(cfg: ModelConfig, out_dir: Path, proc_dir: Path):
+    est = pd.read_csv(proc_dir / "estimation_sample.csv")
+    feats = pd.read_csv(proc_dir / "features_all.csv")
     ann = feats[feats.period.isna()]
     slopes, imp = shap_check(est)
-    sc, donors = synth_all(ann)
+    sc, donors = synth_all(ann, cfg.robustness)
     out = {"shap_dc_slope": slopes, "shap_mean_abs_importance": imp, "synthetic_control": sc, "donor_pool": donors}
-    (OUTD / "robustness.json").write_text(json.dumps(out, indent=2, default=float))
+    (out_dir / "robustness.json").write_text(json.dumps(out, indent=2, default=float))
+    return out
+
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", default=str(OUTD))
+    ap.add_argument("--processed", default=str(PROC))
+    a = ap.parse_args()
+    out = main(ModelConfig.baseline(), Path(a.out), Path(a.processed))
+    sc = out["synthetic_control"]
     print(json.dumps({k: v for k, v in out.items() if k != "synthetic_control"}, indent=1, default=float))
     for t, r in sc.items():
         print(t, {k: (round(v, 3) if isinstance(v, float) else v) for k, v in r.items() if k != "gap_by_year"})
