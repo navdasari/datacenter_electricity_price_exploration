@@ -1,6 +1,6 @@
 # Data centers and residential electricity prices
 
-NOTE: This analysis is solely mine for personal exploration and enjoyment, does NOT represent peer-reviewed research, and does NOT reflect the views or opinions of my employer.
+NOTE: This analysis is solely mine for personal exploration and enjoyment, does NOT represent peer-reviewed research, and does NOT reflect the views or opinions of my employer. It does not claim to be accurate or truthful and should not be relied upon for financial advice or decision-making.
 
 Q: How much of the 2020–2026 change in residential electricity prices came from data centers, and how much from everything else? 
 
