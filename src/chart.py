@@ -31,7 +31,9 @@ DISPLAY = [
 
 
 def grouped(dec):
-    out = dec[["market", "year", "_actual", "_price_prev", "_price", "_dc_net", "_dc_capacity", "_dc_local"]].copy()
+    keep = ["market", "year", "_actual", "_price_prev", "_price", "_dc_net", "_dc_capacity", "_dc_local",
+            "_dc_net_lo", "_dc_net_hi", "_dc_cap_lo", "_dc_cap_hi"] + [c for c in dec.columns if c.startswith("_g")]
+    out = dec[keep].copy()
     for name, cols, *_ in DISPLAY:
         out[name] = dec[cols].sum(axis=1)
     return out
@@ -57,6 +59,10 @@ def plot(g, path, ytd_months):
             pos += vp
             neg += vn
         ax.scatter(x, d._actual.values, s=46, color="#191919", zorder=5, edgecolor="white", linewidth=1.5)
+        # data center net effect with its 95% range, beside each bar
+        xd = x + 0.42
+        ax.vlines(xd, d._dc_net_lo.values, d._dc_net_hi.values, color="#6a4ce2", lw=1.4, zorder=4)
+        ax.scatter(xd, d._dc_net.values, marker="D", s=22, color="#6a4ce2", zorder=5, edgecolor="white", linewidth=1)
         for xi, v in zip(x, d._actual.values):
             ax.annotate(f"{v:+.2f}", (xi, v), textcoords="offset points", xytext=(0, 8 if v >= 0 else -14),
                         ha="center", fontsize=7.5, color="#191919")
@@ -74,11 +80,12 @@ def plot(g, path, ytd_months):
     axes[ncol].set_ylabel("Change in residential price (¢/kWh, year over year)", fontsize=8.5, color="#666666")
     handles = [plt.Rectangle((0, 0), 1, 1, color=c, hatch=h, ec="white") for _, _, c, h in DISPLAY]
     handles.append(plt.Line2D([], [], marker="o", ls="", color="#191919", markersize=7))
+    handles.append(plt.Line2D([], [], marker="D", ls="-", color="#6a4ce2", markersize=5, lw=1.4))
     leg_ax = axes[n] if n < len(axes) else fig.add_axes([0.75, 0.05, 0.2, 0.3])
-    leg_ax.legend(handles, names + ["Net change (actual)"], loc="center left", frameon=False, fontsize=8.5)
+    leg_ax.legend(handles, names + ["Net change (actual)", "Data centers, net (95% range)"], loc="center left", frameon=False, fontsize=8.5)
     fig.suptitle(f"What moved residential electricity prices, {START_YEAR}–2026", fontsize=13, x=0.01, ha="left", y=0.995)
     fig.text(0.01, 0.955, f"Stacked contributions to each year's change; dot = actual net change. 2026 = Jan–{['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][ytd_months]} vs same months of 2025. "
-             "Data-center bars are modeled estimates (double ML + market-monitor capacity attribution).",
+             "Data-center bars are modeled estimates; the purple diamond and line beside each bar show their net effect and 95% range.",
              fontsize=8.5, color="#666666")
     fig.tight_layout(rect=(0, 0, 1, 0.95))
     fig.savefig(path, dpi=160)
@@ -93,7 +100,8 @@ if __name__ == "__main__":
     payload = {
         "groups": [{"name": n, "color": c, "texture": bool(h)} for n, _, c, h in DISPLAY],
         "rows": g.round(4).to_dict(orient="records"),
-        "model": {k: res[k] for k in ["dml_theta", "dml_se", "ols_fe_theta", "ols_fe_se", "n_obs", "n_states", "ytd_months"]},
+        "model": {k: res[k] for k in ["dml_theta", "dml_se", "dml_cov", "dml_terms", "ols_fe_theta", "ols_fe_se",
+                                       "n_obs", "n_states", "ytd_months", "headline_spec"]},
         "robustness": {"shap_dc_slope": rob["shap_dc_slope"],
                        "synthetic_control": {k: {kk: v[kk] for kk in ["gap_2025_cents", "dc_share_change_2019_2025_pp",
                                                                      "implied_effect_per_pp", "placebo_p_value", "top_donors"]}

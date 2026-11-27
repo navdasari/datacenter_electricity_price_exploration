@@ -23,6 +23,14 @@ ISONE = ["CT", "MA", "ME", "NH", "RI", "VT"]
 # Vertically integrated PJM states: utility owns most generation, so retail exposure to
 # the capacity *price* is muted (net long). Restructured states buy capacity at market.
 PJM_VERT_INT = {"VA", "WV"}
+# Share of PJM capacity charges attributed to data center load by the market monitor, by
+# delivery year (June-May). 2025/26-2027/28: $21.3B of $47.2B (45%) over three auctions;
+# 2028/29: $6.5B of $16.4B (40%). Earlier auctions: not attributed (0).
+DC_CAP_SHARE = {2025: 0.45, 2026: 0.45, 2027: 0.45, 2028: 0.40}
+DC_CAP_BAND = 0.05  # +/- band on that share for the uncertainty range
+# EPRI-anchored states use state-specific C&I load growth when it validates against EPRI's
+# 2023 level within this tolerance; otherwise national scaling.
+VALIDATION_TOL = 0.35
 
 
 def load_sales():
@@ -136,25 +144,54 @@ def capacity_monthly():
     return pd.DataFrame(rows)
 
 
-def datacenter_load(annual_total_mwh):
-    """State data center load (MWh/yr): 2023 EPRI share x state load, scaled over time by
-    the national LBNL series (a shift-share / Bartik-style exposure measure)."""
+def datacenter_load(annual):
+    """State data center load (MWh/yr), two measures.
+
+    dc_mwh_v1 (national scaling): 2023 EPRI share x state load, scaled over time by the
+      national LBNL series, so every state grows at the national rate.
+    dc_mwh (headline): for EPRI-anchored states, 2020+ load follows the state's own
+      commercial + industrial (C&I) load above its 2012-2019 non-DC trend, chained from the
+      2019 level. Used only where the implied 2023 level is within VALIDATION_TOL of EPRI's
+      2023 estimate (other states keep v1, since other industrial or crypto load swamps the
+      signal). 2026 follows the national growth rate from 2025.
+    """
     a = pd.read_csv(INP / "datacenter_anchors.csv")
     nat = a[a.kind == "national"].assign(year=lambda d: d.key.astype(int)).set_index("year").value
     yrs = np.arange(2008, 2027)
-    # log-linear interpolation; flat-ish backcast before 2014
     nat_i = pd.Series(np.exp(np.interp(yrs, nat.index, np.log(nat.values))), index=yrs)
     nat_i[yrs < 2014] = nat[2014] * 0.97 ** (2014 - yrs[yrs < 2014])
     shares = a[a.kind == "state_share_2023"].set_index("key").value / 100
-    load23 = annual_total_mwh[annual_total_mwh.year == 2023].set_index("state").tot_mwh
-    dc23 = (shares * load23).dropna()
+    a23 = annual[annual.year == 2023].set_index("state")
+    dc23 = (shares * a23.tot_mwh).dropna()
     rest = nat_i[2023] * 1e6 - dc23.sum()
-    # Remaining national DC load allocated to other states by commercial-sector load
-    com23 = annual_total_mwh[annual_total_mwh.year == 2023].set_index("state").com_mwh
-    others = com23.drop(dc23.index)
+    others = a23.com_mwh.drop(dc23.index)
+    epri = dc23.copy()
     dc23 = pd.concat([dc23, rest * others / others.sum()])
-    rows = [{"state": s, "year": y, "dc_mwh": dc23[s] * nat_i[y] / nat_i[2023]} for s in dc23.index for y in yrs]
-    return pd.DataFrame(rows), nat_i
+    v1 = pd.DataFrame([{"state": s, "year": y, "dc_mwh_v1": dc23[s] * nat_i[y] / nat_i[2023]}
+                       for s in dc23.index for y in yrs])
+
+    v1i = v1.set_index(["state", "year"]).dc_mwh_v1
+    ann = annual.set_index(["state", "year"])
+    ci = ann.com_mwh + ann.ind_mwh
+    v2 = v1i.copy()
+    validation = {}
+    for s in epri.index:
+        c = ci.loc[s].sort_index()
+        d1 = v1i.loc[s]
+        nondc = (c - d1.reindex(c.index)).loc[2012:2019]
+        b = np.polyfit(nondc.index, np.log(nondc.values), 1)
+        resid = c - np.exp(np.polyval(b, c.index))
+        path = {y: max(0.3 * d1[y], d1[2019] + resid[y] - resid[2019]) for y in range(2020, 2026) if y in resid.index}
+        ratio = path[2023] / epri[s]
+        ok = abs(ratio - 1) <= VALIDATION_TOL
+        validation[s] = {"chained_2023_twh": path[2023] / 1e6, "epri_2023_twh": epri[s] / 1e6,
+                         "ratio": ratio, "used": bool(ok)}
+        if ok:
+            for y, v in path.items():
+                v2[(s, y)] = v
+            v2[(s, 2026)] = path[2025] * nat_i[2026] / nat_i[2025]
+    out = v1.merge(v2.rename("dc_mwh").reset_index(), on=["state", "year"])
+    return out, nat_i, validation
 
 
 def build():
@@ -173,6 +210,11 @@ def build():
     m["cap_price"] = m.pjm_w * m.PJM.fillna(0) + m.isone_w * m.ISONE.fillna(0)
     va = (m.state == "VA") & m.dom.notna()
     m.loc[va, "cap_price"] = m.loc[va, "dom"]
+    dy = np.where(m.month >= 6, m.year, m.year - 1)  # capacity delivery year
+    share = pd.Series(dy).map(DC_CAP_SHARE).fillna(0).values * (m.pjm_w.values > 0)
+    m["cap_dc_price"] = m.cap_price * share
+    m["cap_dc_price_lo"] = m.cap_price * np.clip(share - DC_CAP_BAND, 0, 1) * (share > 0)
+    m["cap_dc_price_hi"] = m.cap_price * (share + DC_CAP_BAND) * (share > 0)
     m["cap_restructured"] = np.where(m.state.isin(PJM_VERT_INT), 0.0, 1.0)
     m = m.drop(columns=["PJM", "ISONE", "dom"])
     m.to_parquet(OUT / "panel_monthly.parquet")
@@ -186,7 +228,8 @@ def aggregate(m, months=range(1, 13)):
     sums = d.groupby(["state", "year"])[["res_rev", "res_mwh", "com_mwh", "ind_mwh", "tot_mwh", "gen_total", "gen_gas",
                                          "gen_hydro", "gen_coal", "hdd", "cdd", "gas_x_share"]].sum()
     means = d.groupby(["state", "year"])[["res_cust", "gas_price", "henry_hub", "cpi", "gs10", "ppi_transformer",
-                                          "cap_price", "cap_restructured", "pjm_w", "isone_w"]].mean()
+                                          "cap_price", "cap_dc_price", "cap_dc_price_lo", "cap_dc_price_hi",
+                                          "cap_restructured", "pjm_w", "isone_w"]].mean()
     n = d.groupby(["state", "year"]).size().rename("n_months")
     a = sums.join(means).join(n).reset_index()
     a["res_price"] = a.res_rev / a.res_mwh * 100  # cents/kWh
@@ -203,8 +246,9 @@ if __name__ == "__main__":
     m = build()
     a = aggregate(m)
     a = a[a.n_months == 12]
-    dc, nat = datacenter_load(a)
+    dc, nat, val = datacenter_load(a)
     a = a.merge(dc, on=["state", "year"], how="left")
+    print(pd.DataFrame(val).T.round(2))
     a.to_csv(OUT / "panel_annual.csv", index=False)
     print(a[a.state.isin(["VA", "TX", "AZ", "OR", "WA", "MA"])].query("year>=2019")[
         ["state", "year", "res_price", "gas_cost", "hydro_share", "cap_price", "dc_mwh", "tot_mwh"]].round(3).to_string())
